@@ -8,3 +8,4 @@ scikit-learn
 opencv-python
 joblib
 tensorflow
+jinja2
