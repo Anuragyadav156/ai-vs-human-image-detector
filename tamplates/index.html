@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI vs Human Image Classifier</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: #f2f6fc;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .container {
+      max-width: 500px;
+      margin-top: 80px;
+      padding: 30px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #007bff;
+    }
+
+    #spinner {
+      margin-top: 20px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container text-center">
+  <h2 class="mb-4">🧠 AI vs Human Classifier</h2>
+  <form id="upload-form" enctype="multipart/form-data">
+    <div class="mb-3">
+      <input class="form-control" type="file" id="file" name="file" accept="image/*" required>
+    </div>
+    <button class="btn btn-primary w-100" type="submit">Predict</button>
+  </form>
+
+  <!-- Spinner -->
+  <div id="spinner" class="text-center">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-2">Analyzing image...</p>
+  </div>
+
+  <!-- Prediction result -->
+  <div class="result" id="result"></div>
+</div>
+
+<!-- JavaScript -->
+<script>
+  const form = document.getElementById('upload-form');
+  const resultDiv = document.getElementById('result');
+  const spinner = document.getElementById('spinner');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fileInput = document.getElementById('file');
+
+    if (!fileInput.files.length) {
+      resultDiv.innerText = '⚠️ Please select a file before predicting.';
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+
+    resultDiv.innerText = '';
+    spinner.style.display = 'block';
+
+    try {
+      const response = await fetch('/predict', {
+        method: 'POST',
+        body: formData
+      });
+
+      spinner.style.display = 'none';
+
+      if (!response.ok) {
+        throw new Error(`Server returned ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      if (result.label && result.confidence !== undefined) {
+        resultDiv.innerHTML = `
+          🧠 <strong>Prediction:</strong> ${result.label}<br>
+          📊 <strong>Confidence:</strong> ${Math.round(result.confidence * 100)}%
+        `;
+      } else {
+        resultDiv.innerHTML = `⚠️ Unexpected response format: <pre>${JSON.stringify(result)}</pre>`;
+      }
+
+    } catch (error) {
+      spinner.style.display = 'none';
+      resultDiv.innerHTML = `
+        ❌ <strong>Prediction failed.</strong><br>
+        <small>${error.message}</small>
+      `;
+      console.error('Prediction error:', error);
+    }
+  });
+</script>
+
+</body>
+</html>
