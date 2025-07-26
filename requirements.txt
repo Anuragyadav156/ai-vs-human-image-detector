@@ -1,14 +1,3 @@
-<<<<<<< HEAD
-fastapi
-uvicorn
-pydantic
-python-multipart
-pillow
-numpy
-scikit-learn
-opencv-python
-joblib
-=======
 fastapi
 uvicorn
 pydantic
@@ -19,4 +8,3 @@ scikit-learn
 opencv-python
 joblib
 tensorflow
->>>>>>> 58c84de (Added tensorflow to requirements.txt)
