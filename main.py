@@ -28,10 +28,17 @@ async def home(request: Request):
 # API endpoint to handle prediction
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
+    print("🛬 /predict endpoint hit")
+
     try:
         contents = await file.read()
+        print(f"📸 Received image of size: {len(contents)} bytes")
         image = preprocess_image(contents)
+        print("✅ Image preprocessed")
+
         prediction = model.predict(image)[0][0]
+        print(f"🧠 Prediction result: {prediction}")
+
         label = "AI Generated" if prediction > 0.5 else "Human Created"
         confidence = round(float(prediction if prediction > 0.5 else 1 - prediction), 4)
 
@@ -41,7 +48,7 @@ async def predict(file: UploadFile = File(...)):
         })
 
     except Exception as e:
-        traceback.print_exc()
+        print("❌ Prediction failed:", e)
         return JSONResponse(content={
             "error": "Prediction failed",
             "detail": str(e)
