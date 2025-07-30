@@ -1,11 +1,6 @@
 fastapi
-uvicorn
-pydantic
-python-multipart
+uvicorn[standard]
+tensorflow
 pillow
 numpy
-scikit-learn
-opencv-python
-joblib
-tensorflow
 jinja2
